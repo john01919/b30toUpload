@@ -1,0 +1,19 @@
+name: staging test
+
+on:
+  pull_request:
+    branches: [master]
+    types: [closed]
+
+jobs:
+  test:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: docker build -t 4rbind/b30 nodeHello/
+      - run: docker login -u "yourUsernameHere" -p "yourPasswordHere"
+      - run: docker push 4rbind/b30:latest
+      - run: docker-compose pull
+      - run: docker-compose up -d
+      - run: docker-compose restart
